@@ -20,7 +20,9 @@ CONFIG += c++17
 # Input
 SOURCES += \
     src/main.cpp \
-    src/CalculatorModel.cpp
+    src/CalculatorModel.cpp \
+    src/TodoListModel.cpp
 HEADERS += \
-    src/CalculatorModel.h
+    src/CalculatorModel.h \
+    src/TodoListModel.h
 RESOURCES += qml.qrc

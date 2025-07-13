@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
-        <file>qml/calculator.qml</file>
-        <file>qml/listview.qml</file>
+        <file>qml/Calculator.qml</file>
+        <file>qml/TodoList.qml</file>
     </qresource>
 </RCC>
