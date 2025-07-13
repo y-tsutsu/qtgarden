@@ -15,7 +15,12 @@ INCLUDEPATH += .
 
 QT += quick qml quickcontrols2
 
+CONFIG += c++17
+
 # Input
-SOURCES += main.cpp CalculatorModel.cpp
-HEADERS += CalculatorModel.h
+SOURCES += \
+    src/main.cpp \
+    src/CalculatorModel.cpp
+HEADERS += \
+    src/CalculatorModel.h
 RESOURCES += qml.qrc
