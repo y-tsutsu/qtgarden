@@ -2,9 +2,12 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQuickStyle>
 
 int main(int argc, char *argv[])
 {
+    QQuickStyle::setStyle("Material");
+
     QGuiApplication app(argc, argv);
 
     CalculatorModel model;
