@@ -19,8 +19,8 @@ ApplicationWindow {
         anchors.fill: parent
         interactive: true
 
-        Loader { source: "calculator.qml" }
-        Loader { source: "listview.qml" }
+        Loader { source: "Calculator.qml" }
+        Loader { source: "TodoList.qml" }
     }
 
     PageIndicator {
