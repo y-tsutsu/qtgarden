@@ -16,5 +16,6 @@ INCLUDEPATH += .
 QT += quick qml
 
 # Input
-SOURCES += main.cpp
-RESOURCES += resources.qrc
+SOURCES += main.cpp CalculatorModel.cpp
+HEADERS += CalculatorModel.h
+RESOURCES += qml.qrc
