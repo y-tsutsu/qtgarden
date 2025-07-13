@@ -1,19 +1,9 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Controls.Material 2.15
 
-ApplicationWindow {
-    width: 600
-    height: 480
-    visible: true
-    title: qsTr("qtgarden 🌱")
-
-    font.family: "Segoe UI"
-    font.pointSize: 12
-
-    Material.theme: Material.Light
-    Material.accent: Material.Pink
+Item {
+    anchors.fill: parent
 
     Column {
         spacing: 20
