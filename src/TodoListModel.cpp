@@ -1,4 +1,3 @@
-// TodoListModel.cpp
 #include "TodoListModel.h"
 
 TodoListModel::TodoListModel(QObject *parent) : QAbstractListModel(parent)
@@ -7,15 +6,56 @@ TodoListModel::TodoListModel(QObject *parent) : QAbstractListModel(parent)
 
 int TodoListModel::rowCount(const QModelIndex &) const
 {
-    return static_cast<int>(m_items.size());
+    if (!m_showOnlyUndone)
+    {
+        return static_cast<int>(m_items.size());
+    }
+
+    return std::count_if(m_items.begin(), m_items.end(),
+                         [](const TodoItem &item)
+                         {
+                             return !item.done;
+                         });
 }
 
 QVariant TodoListModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.row() >= static_cast<int>(m_items.size()))
+    if (!index.isValid())
+    {
         return {};
+    }
 
-    const TodoItem &item = m_items[index.row()];
+    int realIndex = -1;
+    if (m_showOnlyUndone)
+    {
+        int count = -1;
+        for (int i = 0; i < static_cast<int>(m_items.size()); i++)
+        {
+            if (!m_items[i].done)
+            {
+                count++;
+            }
+            if (count == index.row())
+            {
+                realIndex = i;
+                break;
+            }
+        }
+        if (realIndex == -1)
+        {
+            return {};
+        }
+    }
+    else
+    {
+        realIndex = index.row();
+        if (realIndex >= static_cast<int>(m_items.size()))
+        {
+            return {};
+        }
+    }
+
+    const TodoItem &item = m_items[realIndex];
     switch (role)
     {
     case ContentsRole:
@@ -44,9 +84,82 @@ void TodoListModel::addItem(const QString &text)
 
 void TodoListModel::toggleDone(int index)
 {
-    if (index >= 0 && index < static_cast<int>(m_items.size()))
+    if (index < 0 || index >= rowCount())
     {
-        m_items[index].done = !m_items[index].done;
-        emit dataChanged(this->index(index), this->index(index));
+        return;
+    }
+
+    int realIndex = index;
+
+    if (m_showOnlyUndone)
+    {
+        int count = -1;
+        for (int i = 0; i < static_cast<int>(m_items.size()); i++)
+        {
+            if (!m_items[i].done)
+            {
+                count++;
+            }
+            if (count == index)
+            {
+                realIndex = i;
+                break;
+            }
+        }
+
+        if (realIndex >= 0 && realIndex < static_cast<int>(m_items.size()))
+        {
+            m_items[realIndex].done = !m_items[realIndex].done;
+            beginResetModel();
+            endResetModel();
+        }
+    }
+    else
+    {
+        if (realIndex >= 0 && realIndex < static_cast<int>(m_items.size()))
+        {
+            m_items[realIndex].done = !m_items[realIndex].done;
+            emit dataChanged(this->index(index), this->index(index));
+        }
+    }
+}
+
+void TodoListModel::removeItem(int index)
+{
+    if (index < 0 || index >= rowCount())
+    {
+        return;
+    }
+
+    int realIndex = index;
+    if (m_showOnlyUndone)
+    {
+        int count = -1;
+        for (int i = 0; i < static_cast<int>(m_items.size()); i++)
+        {
+            if (!m_items[i].done)
+            {
+                count++;
+            }
+            if (count == index)
+            {
+                realIndex = i;
+                break;
+            }
+        }
+    }
+
+    beginRemoveRows(QModelIndex(), index, index);
+    m_items.erase(m_items.begin() + realIndex);
+    endRemoveRows();
+}
+
+void TodoListModel::setShowOnlyUndone(bool show)
+{
+    if (m_showOnlyUndone != show)
+    {
+        m_showOnlyUndone = show;
+        beginResetModel();
+        endResetModel();
     }
 }

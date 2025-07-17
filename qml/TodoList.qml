@@ -14,7 +14,7 @@ Item {
             TextField {
                 id: inputField
                 placeholderText: "Add new item"
-                width: 200
+                Layout.preferredWidth: 300
             }
             Button {
                 text: "Add"
@@ -27,12 +27,18 @@ Item {
             }
         }
 
+        CheckBox {
+            text: "Show only incomplete"
+            onToggled: todoModel.setShowOnlyUndone(checked)
+        }
+
         ListView {
-            width: 400
-            height: 350
+            Layout.preferredWidth: 400
+            Layout.preferredHeight: 300
             model: todoModel
+
             delegate: Rectangle {
-                width: parent.width
+                width: parent ? parent.width : 0
                 height: 40
                 color: done ? "lavenderblush" : "ghostwhite"
                 border.width: 1
@@ -41,6 +47,8 @@ Item {
                 RowLayout {
                     spacing: 10
                     anchors.verticalCenter: parent.verticalCenter
+                    anchors.fill: parent
+                    anchors.topMargin: -5
 
                     CheckBox {
                         id: checkbox
@@ -51,6 +59,12 @@ Item {
                         text: contents
                         font.strikeout: done
                         font.pixelSize: 18
+                        Layout.fillWidth: true
+                    }
+                    Button {
+                        text: "❌"
+                        onClicked: todoModel.removeItem(index)
+                        background.visible: false
                     }
                 }
             }
