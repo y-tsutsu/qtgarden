@@ -28,11 +28,13 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE void addItem(const QString &text);
-    Q_INVOKABLE void toggleDone(int index);
     Q_INVOKABLE void removeItem(int index);
+    Q_INVOKABLE void toggleDone(int index);
     Q_INVOKABLE void setShowOnlyUndone(bool show);
 
 private:
     std::vector<TodoItem> m_items;
     bool m_showOnlyUndone = false;
+
+    int visibleIndexToRealIndex(int visibleIndex) const;
 };
