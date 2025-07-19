@@ -25,34 +25,10 @@ QVariant TodoListModel::data(const QModelIndex &index, int role) const
         return {};
     }
 
-    int realIndex = -1;
-    if (m_showOnlyUndone)
+    int realIndex = visibleIndexToRealIndex(index.row());
+    if (realIndex < 0 || realIndex >= static_cast<int>(m_items.size()))
     {
-        int count = -1;
-        for (int i = 0; i < static_cast<int>(m_items.size()); i++)
-        {
-            if (!m_items[i].done)
-            {
-                count++;
-            }
-            if (count == index.row())
-            {
-                realIndex = i;
-                break;
-            }
-        }
-        if (realIndex == -1)
-        {
-            return {};
-        }
-    }
-    else
-    {
-        realIndex = index.row();
-        if (realIndex >= static_cast<int>(m_items.size()))
-        {
-            return {};
-        }
+        return {};
     }
 
     const TodoItem &item = m_items[realIndex];
@@ -82,48 +58,6 @@ void TodoListModel::addItem(const QString &text)
     endInsertRows();
 }
 
-void TodoListModel::toggleDone(int index)
-{
-    if (index < 0 || index >= rowCount())
-    {
-        return;
-    }
-
-    int realIndex = index;
-
-    if (m_showOnlyUndone)
-    {
-        int count = -1;
-        for (int i = 0; i < static_cast<int>(m_items.size()); i++)
-        {
-            if (!m_items[i].done)
-            {
-                count++;
-            }
-            if (count == index)
-            {
-                realIndex = i;
-                break;
-            }
-        }
-
-        if (realIndex >= 0 && realIndex < static_cast<int>(m_items.size()))
-        {
-            m_items[realIndex].done = !m_items[realIndex].done;
-            beginResetModel();
-            endResetModel();
-        }
-    }
-    else
-    {
-        if (realIndex >= 0 && realIndex < static_cast<int>(m_items.size()))
-        {
-            m_items[realIndex].done = !m_items[realIndex].done;
-            emit dataChanged(this->index(index), this->index(index));
-        }
-    }
-}
-
 void TodoListModel::removeItem(int index)
 {
     if (index < 0 || index >= rowCount())
@@ -131,22 +65,10 @@ void TodoListModel::removeItem(int index)
         return;
     }
 
-    int realIndex = index;
-    if (m_showOnlyUndone)
+    int realIndex = visibleIndexToRealIndex(index);
+    if (realIndex < 0 || realIndex >= static_cast<int>(m_items.size()))
     {
-        int count = -1;
-        for (int i = 0; i < static_cast<int>(m_items.size()); i++)
-        {
-            if (!m_items[i].done)
-            {
-                count++;
-            }
-            if (count == index)
-            {
-                realIndex = i;
-                break;
-            }
-        }
+        return;
     }
 
     beginRemoveRows(QModelIndex(), index, index);
@@ -154,12 +76,61 @@ void TodoListModel::removeItem(int index)
     endRemoveRows();
 }
 
+void TodoListModel::toggleDone(int index)
+{
+    if (index < 0 || index >= rowCount())
+    {
+        return;
+    }
+
+    int realIndex = visibleIndexToRealIndex(index);
+    if (realIndex < 0 || realIndex >= static_cast<int>(m_items.size()))
+    {
+        return;
+    }
+
+    if (m_showOnlyUndone)
+    {
+        beginResetModel();
+        m_items[realIndex].done = !m_items[realIndex].done;
+        endResetModel();
+    }
+    else
+    {
+        m_items[realIndex].done = !m_items[realIndex].done;
+        emit dataChanged(this->index(index), this->index(index));
+    }
+}
+
 void TodoListModel::setShowOnlyUndone(bool show)
 {
     if (m_showOnlyUndone != show)
     {
-        m_showOnlyUndone = show;
         beginResetModel();
+        m_showOnlyUndone = show;
         endResetModel();
     }
+}
+
+int TodoListModel::visibleIndexToRealIndex(int visibleIndex) const
+{
+    if (!m_showOnlyUndone)
+    {
+        return visibleIndex;
+    }
+
+    int count = -1;
+    for (int i = 0; i < static_cast<int>(m_items.size()); i++)
+    {
+        if (!m_items[i].done)
+        {
+            count++;
+        }
+        if (count == visibleIndex)
+        {
+            return i;
+        }
+    }
+
+    return -1;
 }
