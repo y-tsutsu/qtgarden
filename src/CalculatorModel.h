@@ -22,7 +22,7 @@ public:
     int area() const;
 
     bool continuousCalculate() const;
-    void setContinuousCalculate(bool enabled);
+    void setContinuousCalculate(bool value);
 
     Q_INVOKABLE void calculateArea();
 

@@ -44,11 +44,11 @@ bool CalculatorModel::continuousCalculate() const
     return m_continuousCalculate;
 }
 
-void CalculatorModel::setContinuousCalculate(bool enabled)
+void CalculatorModel::setContinuousCalculate(bool value)
 {
-    if (m_continuousCalculate != enabled)
+    if (m_continuousCalculate != value)
     {
-        m_continuousCalculate = enabled;
+        m_continuousCalculate = value;
         emit continuousCalculateChanged();
         updateAreaIfNeeded();
     }
