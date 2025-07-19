@@ -6,7 +6,7 @@ TodoListModel::TodoListModel(QObject *parent) : QAbstractListModel(parent)
 
 int TodoListModel::rowCount(const QModelIndex &) const
 {
-    if (!m_showOnlyUndone)
+    if (!m_filterUndoneOnly)
     {
         return static_cast<int>(m_items.size());
     }
@@ -51,6 +51,22 @@ QHash<int, QByteArray> TodoListModel::roleNames() const
     };
 }
 
+bool TodoListModel::filterUndoneOnly() const
+{
+    return m_filterUndoneOnly;
+}
+
+void TodoListModel::setFilterUndoneOnly(bool value)
+{
+    if (m_filterUndoneOnly != value)
+    {
+        beginResetModel();
+        m_filterUndoneOnly = value;
+        endResetModel();
+        emit filterUndoneOnlyChanged();
+    }
+}
+
 void TodoListModel::addItem(const QString &text)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
@@ -89,7 +105,7 @@ void TodoListModel::toggleDone(int index)
         return;
     }
 
-    if (m_showOnlyUndone)
+    if (m_filterUndoneOnly)
     {
         beginResetModel();
         m_items[realIndex].done = !m_items[realIndex].done;
@@ -102,19 +118,9 @@ void TodoListModel::toggleDone(int index)
     }
 }
 
-void TodoListModel::setShowOnlyUndone(bool show)
-{
-    if (m_showOnlyUndone != show)
-    {
-        beginResetModel();
-        m_showOnlyUndone = show;
-        endResetModel();
-    }
-}
-
 int TodoListModel::visibleIndexToRealIndex(int visibleIndex) const
 {
-    if (!m_showOnlyUndone)
+    if (!m_filterUndoneOnly)
     {
         return visibleIndex;
     }

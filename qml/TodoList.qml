@@ -29,7 +29,8 @@ Item {
 
         CheckBox {
             text: "Show only incomplete"
-            onToggled: todoModel.setShowOnlyUndone(checked)
+            checked: todoModel.filterUndoneOnly
+            onToggled: todoModel.filterUndoneOnly = checked
         }
 
         ListView {
