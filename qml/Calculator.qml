@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.15
 Item {
     anchors.fill: parent
 
-    Column {
+    ColumnLayout {
         spacing: 20
         anchors.centerIn: parent
 
@@ -49,16 +49,11 @@ Item {
             }
         }
 
-        RowLayout {
-            spacing: 10
-            Switch {
-                checked: calculatorModel.continuousCalculate
-                onToggled: calculatorModel.continuousCalculate = checked
-            }
-            Label {
-                text: "Continuous calculate"
-                font.bold: true
-            }
+        Switch {
+            text: "Continuous calculate"
+            font.bold: true
+            checked: calculatorModel.continuousCalculate
+            onToggled: calculatorModel.continuousCalculate = checked
         }
 
         Button {

@@ -27,8 +27,9 @@ Item {
             }
         }
 
-        CheckBox {
+        Switch {
             text: "Show only incomplete"
+            font.bold: true
             checked: todoModel.filterUndoneOnly
             onToggled: todoModel.filterUndoneOnly = checked
         }
