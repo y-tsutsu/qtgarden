@@ -11,11 +11,11 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    CalculatorModel model;
+    CalculatorModel calculatorModel;
     TodoListModel todoModel;
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("calculatorModel", &model);
+    engine.rootContext()->setContextProperty("calculatorModel", &calculatorModel);
     engine.rootContext()->setContextProperty("todoModel", &todoModel);
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
